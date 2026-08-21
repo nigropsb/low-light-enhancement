@@ -1,0 +1,42 @@
+# Full training/dev environment (Phases 0-7): data loading, training,
+# metrics, ONNX export/benchmark. Deliberately broader than
+# requirements-serve-{onnx,pytorch}.txt, which are scoped down for the
+# Cloud Run containers and shouldn't carry torch/kornia/onnxruntime-gpu.
+#
+# Versions pinned from the actual working WSL2 venv (`pip list`), not
+# assumed. Cross-checked against every src/ and scripts/ import (grep), but
+# kept matching Phase 0's real setup workflow rather than pruned to only
+# what's imported today -- Phase 0 was one venv, "pip install torch
+# torchvision --index-url ...; pip install timm kornia" etc., no separate
+# exceptions. torchvision/timm/pandas below are confirmed part of that
+# setup command but have zero imports anywhere in the current source --
+# harmless to keep for setup-command fidelity, just don't assume they're
+# load-bearing if you're trimming this file later.
+#
+# CUDA build: matches the driver/CUDA setup documented in Phase 0
+# (NVIDIA Studio driver 610.57.01, CUDA UMD 13.3) via the cu121 wheel index.
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch==2.5.1+cu121
+torchvision==0.20.1+cu121
+
+# Data / metrics / loss
+kornia==0.8.2
+lpips==0.1.4
+pyiqa==0.1.16
+numpy==2.2.6
+opencv-python==5.0.0.93
+pillow==12.2.0
+timm==1.0.28    # part of the Phase 0 install command; not imported by any current script
+pandas==2.3.3   # part of the Phase 0 install command; not imported by any current script
+
+# ONNX export + GPU benchmarking (Phase 7)
+onnx==1.22.0
+onnxruntime-gpu==1.23.2
+
+# Dataset acquisition (Phase 1) + local HTTP smoke tests against a running
+# server, Docker or Cloud Run (Phase 8's verify/benchmark scripts)
+kaggle==1.7.4.5
+requests==2.34.2
+
+# Qualitative before/after grids
+matplotlib==3.10.9
