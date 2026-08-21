@@ -1,0 +1,3 @@
+runtime,psnr_db,ssim
+PyTorch fp32,21.33,0.800
+ONNX fp32,21.33,0.800

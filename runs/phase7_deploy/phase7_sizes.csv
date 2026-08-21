@@ -1,0 +1,4 @@
+artifact,size_mb
+.pt checkpoint,37.68
+ONNX fp32,13.29
+ONNX int8,N/A

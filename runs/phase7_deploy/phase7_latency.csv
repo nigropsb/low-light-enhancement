@@ -1,0 +1,5 @@
+runtime,mean_ms,std_ms
+PyTorch CPU,2473.05,147.02
+PyTorch CUDA,283.95,0.30
+ONNX Runtime CPU fp32,3026.92,20.71
+ONNX Runtime CUDA fp32,580.54,1.80
