@@ -1,0 +1,3 @@
+backend,image_size_mb,cold_start_s,mean_round_trip_ms,mean_server_inference_ms,psnr,ssim,error
+onnx,131.9,2.03,3108.4,3000.2,25.64,0.88,
+pytorch,319.4,2.29,2886.9,2781.3,25.64,0.88,

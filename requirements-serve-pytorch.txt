@@ -1,0 +1,14 @@
+# Phase 8 serving dependencies for the PyTorch-CPU comparison backend.
+# --extra-index-url pulls the CPU-only torch build (no bundled CUDA
+# runtime) -- meaningfully smaller than the default PyPI wheel, which
+# assumes CUDA. This is the fair-comparison version of "PyTorch in a
+# container": the earlier assumption that PyTorch necessarily means a huge
+# CUDA image was never verified against this build -- that's exactly what
+# scripts/benchmark_phase8.py checks for real.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.4.*
+fastapi==0.115.*
+uvicorn[standard]==0.32.*
+pillow==10.4.*
+numpy==1.26.*
+python-multipart==0.0.*

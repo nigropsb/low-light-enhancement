@@ -1,0 +1,12 @@
+# Phase 8 serving dependencies only -- deliberately NOT the full training
+# requirements.txt (no torch, no kornia, no timm). The exported ONNX graph
+# is self-contained; the whole point of this split is a CUDA-free,
+# torch-free container for Cloud Run's cold-start/image-size profile (see
+# src/serve.py's module docstring for the latency-vs-container-size
+# tradeoff this was chosen for).
+fastapi==0.115.*
+uvicorn[standard]==0.32.*
+onnxruntime==1.19.*
+pillow==10.4.*
+numpy==1.26.*
+python-multipart==0.0.*

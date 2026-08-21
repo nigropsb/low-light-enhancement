@@ -1,0 +1,34 @@
+# Phase 8 -- Cloud Run serving container, ONNX Runtime CPU backend.
+# One of two comparison images -- see Dockerfile.pytorch for the PyTorch-CPU
+# counterpart. Phase 7's own benchmark showed ONNX Runtime CPU (~3.0s/image)
+# is actually ~18% SLOWER than PyTorch CPU (~2.5s) at 400x600 -- this image
+# is not assumed to be the faster/better option going in. Built side-by-side
+# with Dockerfile.pytorch specifically so scripts/benchmark_phase8.py can
+# measure image size and cold-start time for real, rather than assuming a
+# torch-free image wins there just because it's smaller in principle.
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Only serving deps -- see requirements-serve-onnx.txt's own comment for why
+# this is intentionally not requirements.txt (no torch/kornia/timm).
+COPY requirements-serve-onnx.txt .
+RUN pip install --no-cache-dir -r requirements-serve-onnx.txt
+
+COPY src/serve_onnx.py src/serve_onnx.py
+COPY src/__init__.py src/__init__.py
+# Staged by scripts/export_for_serving_onnx.py before `docker build` runs --
+# see that script's docstring for why the model is re-exported into a
+# build-context-local path rather than referencing runs/ directly.
+COPY deploy/model/restormer_phase4_fp32.onnx model/restormer_phase4_fp32.onnx
+COPY deploy/model/restormer_phase4_fp32.epoch model/restormer_phase4_fp32.epoch
+
+ENV MODEL_PATH=model/restormer_phase4_fp32.onnx
+# Cloud Run injects PORT at runtime; 8080 is Cloud Run's documented default
+# and used here as the container's own default for local `docker run` too.
+ENV PORT=8080
+
+# Cloud Run sets PORT via env var at runtime; shell form lets $PORT expand
+# (the exec-form CMD array does NOT expand env vars, a common Cloud Run
+# footgun worth avoiding explicitly here).
+CMD exec uvicorn src.serve_onnx:app --host 0.0.0.0 --port ${PORT} --workers 1

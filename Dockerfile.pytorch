@@ -1,0 +1,32 @@
+# Phase 8 -- Cloud Run serving container, PyTorch-CPU backend.
+# One of two comparison images -- see Dockerfile.onnx for the ONNX Runtime
+# counterpart. Phase 7's own benchmark showed this backend is ~18% FASTER
+# per-request than ONNX Runtime CPU (2473ms vs 3027ms at 400x600) -- the
+# open question is whether that holds up once image size and cold-start
+# are measured too. Uses the CPU-only torch wheel (see
+# requirements-serve-pytorch.txt), not the default CUDA-bundled one.
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements-serve-pytorch.txt .
+RUN pip install --no-cache-dir -r requirements-serve-pytorch.txt
+
+COPY src/serve_pytorch.py src/serve_pytorch.py
+COPY src/onnx_export.py src/onnx_export.py
+COPY src/models/restormer.py src/models/restormer.py
+COPY src/models/__init__.py src/models/__init__.py
+COPY src/__init__.py src/__init__.py
+# Staged by scripts/export_for_serving_pytorch.py before `docker build` runs
+# -- stripped of optimizer/scaler state (see that script's docstring); do
+# NOT point this at runs/phase4_perceptual_run2/best.pt directly, that's the
+# 37.68 MB training checkpoint, not the inference-only artifact this image
+# expects.
+COPY deploy/model/restormer_phase4_inference.pt model/restormer_phase4_inference.pt
+
+ENV MODEL_PATH=model/restormer_phase4_inference.pt
+ENV PORT=8080
+
+# Shell form so $PORT expands at runtime -- same Cloud Run footgun noted in
+# Dockerfile.onnx.
+CMD exec uvicorn src.serve_pytorch:app --host 0.0.0.0 --port ${PORT} --workers 1
