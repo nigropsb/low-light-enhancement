@@ -1,0 +1,25 @@
+# Dataset — redistribute via Kaggle (see README Getting Started), not git
+/data/
+
+# Virtual environment
+venv/
+.venv/
+
+# Python bytecode cache
+__pycache__/
+*.pyc
+
+# Model checkpoints and exported binaries — regenerate via train_*.py /
+# export_for_serving_*.py rather than committing 300+ MB of .pt/.onnx files.
+# Lightweight results (log.csv, comparison grids, benchmark CSVs) in the
+# same runs/ subfolders are intentionally NOT ignored — they're the actual
+# evidence behind the README's numbers.
+runs/**/*.pt
+runs/**/*.onnx
+deploy/model/
+
+# Windows/WSL "downloaded from the internet" markers — pure cruft
+*:Zone.Identifier
+
+# OS cruft
+.DS_Store
