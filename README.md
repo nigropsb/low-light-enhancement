@@ -58,7 +58,7 @@ Scaled down from the paper's reference config to fit the training budget:
 | 6 | Full PSNR/SSIM/LPIPS/MANIQA benchmark | ✅ |
 | 7 | ONNX export, quantization attempt, latency/size benchmark | ✅ |
 | 8 | FastAPI + Docker + GCP Cloud Run | ✅ |
-| 9 | Documentation & polish | 🚧 |
+| 9 | Documentation & polish | ✅ |
 
 ## Edge Deployment (Phase 7)
 
@@ -191,6 +191,7 @@ PROJECT_ID=your-gcp-project ./scripts/deploy_phase8.sh
 - **LR schedule:** trained with a flat `lr=2e-4` throughout; late-epoch PSNR oscillation suggests a cosine or plateau schedule could recover a small additional gain, not pursued given the model already cleared the baseline by a wide margin.
 - **Single-image latency comparisons:** Phase 7/8 latency benchmarks used one representative image rather than an eval15-wide aggregate.
 - **Cloud vs. local inference gap:** the live endpoint runs ~28% slower than the local container benchmark, plausibly virtualization/scheduling overhead — not root-caused.
+- **No interactive demo (Gradio/Streamlit):** scoped in Phase 9 as optional, deliberately deferred — the before/after grid above and the deployed Cloud Run endpoint already cover the two things a demo would add (visual proof and a live callable service), so it wasn't judged worth the added maintenance surface for this MVP. Would revisit if a reviewer without API/curl familiarity needed a no-setup way to try it.
 
 ## Tech Stack
 
@@ -198,4 +199,4 @@ PyTorch · ONNX Runtime · Kornia · DINOv2 (`torch.hub`) · LPIPS · pyiqa (MAN
 
 ## Author
 
-Paulo Nigro — PhD, Computational Mechanics. Built independently of employer work: own architecture, own public dataset (LOL), own code.
+Paulo Salvador Britto Nigro — PhD, Computational Mechanics. Built independently of employer work: own architecture, own public dataset (LOL), own code.
